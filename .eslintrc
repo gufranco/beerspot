@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb-typescript/base",
+  "rules": {
+    "class-methods-use-this": "off"
+  },
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}

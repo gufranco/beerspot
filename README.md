@@ -1,2 +1,5 @@
-# mandabrejas
-mandabrejas, né.
+# Mandabrejas
+
+```bash
+npm run dev
+```

@@ -1,0 +1,15 @@
+{
+  "apps": [
+    {
+      "name": "application",
+      "script": "dist/app.js",
+      "exec_mode": "cluster",
+      "instances": -1,
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "merge_logs": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
