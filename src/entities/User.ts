@@ -1,23 +1,23 @@
+/* eslint-disable import/no-cycle */
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
 } from 'typeorm';
-// eslint-disable-next-line import/no-cycle
 import Role from './Role';
+import Company from './Company';
+import BaseEntity from './BaseEntity';
+import Address from './Address';
+import AdditionalAddress from './AdditionalAddress';
 
-export type StatusType = 'peding' | 'enabled' | 'disabled';
+export type StatusType = 'pending' | 'enabled' | 'disabled';
 
 @Entity()
-export default class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
-
-  // @ts-ignore
+export default class User extends BaseEntity {
   @ManyToOne(
     () => Role,
     (role: Role) => role.users,
@@ -26,6 +26,29 @@ export default class User {
     },
   )
   role!: Role;
+
+  @Index()
+  @OneToOne(() => Address, {
+    nullable: false,
+  })
+  @JoinColumn()
+  address!: Address;
+
+  @OneToMany(
+    () => AdditionalAddress,
+    (additionalAddress) => additionalAddress.user,
+    {
+      nullable: true,
+    },
+  )
+  additionalAddresses!: AdditionalAddress[];
+
+  @Index()
+  @OneToOne(() => Company, {
+    nullable: true,
+  })
+  @JoinColumn()
+  company!: Company;
 
   @Column({
     unique: true,
@@ -41,20 +64,15 @@ export default class User {
   @Index()
   @Column({
     type: 'enum',
-    enum: ['peding', 'enabled', 'disabled'],
-    default: 'peding',
+    enum: ['pending', 'enabled', 'disabled'],
+    default: 'pending',
   })
   status!: StatusType;
 
   @Column({
-    length: 32,
+    length: 64,
   })
-  firstName!: string;
-
-  @Column({
-    length: 32,
-  })
-  lastName!: string;
+  name!: string;
 
   @Column({
     type: 'date',
@@ -63,15 +81,12 @@ export default class User {
 
   @Column({
     unique: true,
+    length: 11,
+  })
+  document!: string;
+
+  @Column({
+    unique: true,
   })
   phone!: string;
-
-  @CreateDateColumn()
-  @Index()
-  createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date | null;
 }

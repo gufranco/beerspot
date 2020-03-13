@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 
 @Service()
-export default class EnvironmentService {
+export default class EnvironmentHelper {
   private environmentVars: Readonly<string[]> = [
     'NODE_ENV',
     'BCRYPT_ROUNDS',

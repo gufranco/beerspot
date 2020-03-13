@@ -1,18 +1,18 @@
 import jsonwebtoken from 'jsonwebtoken';
 import { Service, Inject } from 'typedi';
 import { JwtPayloadInterface } from '../interfaces/CryptoInterface';
-import EnvironmentService from './EnvironmentService';
+import EnvironmentHelper from './EnvironmentHelper';
 
 @Service()
-export default class JwtService {
+export default class JwtHelper {
   @Inject()
-  private environmentService!: EnvironmentService;
+  private environmentHelper!: EnvironmentHelper;
 
   public async createToken(payload: JwtPayloadInterface, expiresIn: string = '30 days'): Promise<string> {
     return new Promise((resolve, reject) => {
       jsonwebtoken.sign(
         payload,
-        this.environmentService.getJwtPassword(),
+        this.environmentHelper.getJwtPassword(),
         { expiresIn },
         (error: any, token: unknown) => {
           if (error) {
@@ -25,11 +25,11 @@ export default class JwtService {
     });
   }
 
-  public async checkToken(token: string): Promise<JwtPayloadInterface> {
+  public async decryptToken(token: string): Promise<JwtPayloadInterface> {
     return new Promise((resolve, reject) => {
       jsonwebtoken.verify(
         token,
-        this.environmentService.getJwtPassword(),
+        this.environmentHelper.getJwtPassword(),
         { algorithms: ['RS512'] },
         (error: any, jwtPayload: unknown) => {
           if (error) {

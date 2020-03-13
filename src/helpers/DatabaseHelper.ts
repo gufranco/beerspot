@@ -1,11 +1,11 @@
 import { useContainer, createConnection } from 'typeorm';
 import { Container, Service, Inject } from 'typedi';
-import EnvironmentService from './EnvironmentService';
+import EnvironmentHelper from './EnvironmentHelper';
 
 @Service()
-export default class DatabaseService {
+export default class DatabaseHelper {
   @Inject()
-  private environmentService!: EnvironmentService;
+  private environmentHelper!: EnvironmentHelper;
 
   constructor() {
     useContainer(Container);
@@ -15,13 +15,13 @@ export default class DatabaseService {
     try {
       await createConnection({
         type: 'postgres',
-        host: this.environmentService.getTypeormHost(),
-        port: this.environmentService.getTypeormPort(),
-        username: this.environmentService.getTypeormUsername(),
-        password: this.environmentService.getTypeormPassword(),
-        database: this.environmentService.getTypeormDatabase(),
+        host: this.environmentHelper.getTypeormHost(),
+        port: this.environmentHelper.getTypeormPort(),
+        username: this.environmentHelper.getTypeormUsername(),
+        password: this.environmentHelper.getTypeormPassword(),
+        database: this.environmentHelper.getTypeormDatabase(),
         synchronize: true,
-        logging: this.environmentService.getEnvironment() !== 'production',
+        logging: this.environmentHelper.getEnvironment() !== 'production',
         entities: [`${__dirname}/../entities/*.js`],
         migrations: [`${__dirname}/../migrations/*.js`],
         subscribers: [`${__dirname}/../subscribers/*.js`],

@@ -4,6 +4,10 @@ import User from '../entities/User';
 @EntityRepository(User)
 export default class UserRepository extends Repository<User> {
   findByEmail(email: string) {
-    return this.findOne({ email }, { relations: ['role'] });
+    return this.findOneOrFail({ email }, { relations: ['role'] });
+  }
+
+  findById(id: number) {
+    return this.findOneOrFail({ id }, { relations: ['role'] });
   }
 }

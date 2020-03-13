@@ -1,23 +1,12 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 // eslint-disable-next-line import/no-cycle
 import User from './User';
+import BaseEntity from './BaseEntity';
 
 export type RoleType = 'customer' | 'provider' | 'administrator';
 
 @Entity()
-export default class Role {
-  @PrimaryGeneratedColumn()
-  id!: number;
-
-  // @ts-ignore
+export default class Role extends BaseEntity {
   @OneToMany(
     () => User,
     (user: User) => user.role,
@@ -32,13 +21,4 @@ export default class Role {
     unique: true,
   })
   type!: RoleType;
-
-  @Index()
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date | null;
 }

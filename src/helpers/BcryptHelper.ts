@@ -1,14 +1,14 @@
 import bcryptjs from 'bcryptjs';
 import { Service, Inject } from 'typedi';
-import EnvironmentService from './EnvironmentService';
+import EnvironmentHelper from './EnvironmentHelper';
 
 @Service()
-export default class BcryptService {
+export default class BcryptHelper {
   @Inject()
-  private environmentService!: EnvironmentService;
+  private environmentHelper!: EnvironmentHelper;
 
   public async hash(value: string): Promise<string> {
-    return bcryptjs.hash(value, this.environmentService.getBcryptRounds());
+    return bcryptjs.hash(value, this.environmentHelper.getBcryptRounds());
   }
 
   // eslint-disable-next-line class-methods-use-this

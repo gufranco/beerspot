@@ -4,6 +4,6 @@ import Role, { RoleType } from '../entities/Role';
 @EntityRepository(Role)
 export default class RoleRepository extends Repository<Role> {
   findByType(type: RoleType) {
-    return this.findOne({ type });
+    return this.findOneOrFail({ type });
   }
 }
