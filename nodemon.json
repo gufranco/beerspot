@@ -12,6 +12,9 @@
     "TYPEORM_USERNAME": "root",
     "TYPEORM_PASSWORD": "root",
     "TYPEORM_DATABASE": "mandabrejas",
-    "JWT_PASSWORD": "fakePassword"
+    "JWT_PASSWORD": "fakePassword",
+    "SENDGRID_API_KEY": "fakeKey",
+    "API_BASE_URL": "fakeBaseUrl",
+    "EMAIL_CONTACT": "fakeEmailContact"
   }
 }

@@ -12,18 +12,22 @@ export default class EnvironmentHelper {
     'TYPEORM_PASSWORD',
     'TYPEORM_DATABASE',
     'JWT_PASSWORD',
+    'SENDGRID_API_KEY',
+    'API_BASE_URL',
+    'EMAIL_CONTACT',
   ];
 
   public async checkEnvironment(): Promise<void> {
     const missingEnvironmentVars: string[] = this.environmentVars.filter(
-      (variable) => !Object.prototype.hasOwnProperty.call(process.env, variable),
+      (variable) =>
+        !Object.prototype.hasOwnProperty.call(process.env, variable),
     );
 
     if (missingEnvironmentVars.length) {
-      // eslint-disable-next-line no-console
-      console.error(
-        'Some environment variables are missing:',
-        missingEnvironmentVars,
+      throw new Error(
+        `Some environment variables are missing: ${JSON.stringify(
+          missingEnvironmentVars,
+        )}`,
       );
     }
   }
@@ -62,5 +66,17 @@ export default class EnvironmentHelper {
 
   public getJwtPassword(): string {
     return <string>process.env.JWT_PASSWORD;
+  }
+
+  public getSendgridApiKey(): string {
+    return <string>process.env.SENDGRID_API_KEY;
+  }
+
+  public getApiBaseUrl(): string {
+    return <string>process.env.API_BASE_URL;
+  }
+
+  public getEmailContact(): string {
+    return <string>process.env.EMAIL_CONTACT;
   }
 }

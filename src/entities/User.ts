@@ -63,8 +63,6 @@ export default class User extends BaseEntity {
 
   @Index()
   @Column({
-    type: 'enum',
-    enum: ['pending', 'enabled', 'disabled'],
     default: 'pending',
   })
   status!: StatusType;

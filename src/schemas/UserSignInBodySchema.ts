@@ -1,6 +1,6 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
-export default class SignInBodySchema {
+export default class UserSignInBodySchema {
   @IsEmail()
   email!: string;
 

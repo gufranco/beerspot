@@ -15,8 +15,6 @@ export default class Role extends BaseEntity {
 
   @Index()
   @Column({
-    type: 'enum',
-    enum: ['customer', 'provider', 'administrator'],
     default: 'customer',
     unique: true,
   })

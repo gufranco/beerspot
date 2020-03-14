@@ -6,20 +6,23 @@ import {
   Body,
   UnauthorizedError,
   BadRequestError,
+  Get,
+  Param,
 } from 'routing-controllers';
 import Role from '../entities/Role';
 import UserRepository from '../repositories/UserRepository';
 import RoleRepository from '../repositories/RoleRepository';
 import User from '../entities/User';
 import { HttpSignInResponseInterface } from '../interfaces/HttpInterface';
-import SignInBodySchema from '../schemas/SignInBodySchema';
-import SignUpBodySchema from '../schemas/SignUpBodySchema';
+import UserSignInBodySchema from '../schemas/UserSignInBodySchema';
+import UserSignUpBodySchema from '../schemas/UserSignUpBodySchema';
 import BcryptHelper from '../helpers/BcryptHelper';
 import JwtHelper from '../helpers/JwtHelper';
 import Address from '../entities/Address';
 import AddressRepository from '../repositories/AddressRepository';
 import Company from '../entities/Company';
 import CompanyRepository from '../repositories/CompanyRepository';
+import MailHelper from '../helpers/MailHelper';
 
 @Service()
 @JsonController('/users')
@@ -29,6 +32,9 @@ export default class UserController {
 
   @Inject()
   private jwtHelper!: JwtHelper;
+
+  @Inject()
+  private mailHelper!: MailHelper;
 
   private userRepository: UserRepository = getCustomRepository(UserRepository);
 
@@ -44,7 +50,7 @@ export default class UserController {
 
   @Post('/sign_in')
   public async signIn(
-    @Body({ required: true }) signInBodySchema: SignInBodySchema,
+    @Body({ required: true }) signInBodySchema: UserSignInBodySchema,
   ): Promise<HttpSignInResponseInterface | undefined> {
     const { email, password } = signInBodySchema;
 
@@ -71,21 +77,34 @@ export default class UserController {
 
   @Post('/sign_up')
   public async signUp(
-    @Body({ required: true }) body: SignUpBodySchema,
+    @Body({ required: true }) body: UserSignUpBodySchema,
   ): Promise<User> {
     const { type } = body;
 
+    let user: User;
     switch (type) {
       case 'customer':
-        return this.signUpCustomer(body);
+        user = await this.signUpCustomer(body);
+        break;
       case 'provider':
-        return this.signUpProvider(body);
+        user = await this.signUpProvider(body);
+        break;
       default:
         throw new BadRequestError();
     }
+
+    try {
+      await this.mailHelper.sendConfirmation(user);
+    } catch (exception) {
+      // eslint-disable-next-line no-console
+      console.error(exception, user);
+    }
+
+    delete user.password;
+    return user;
   }
 
-  public async signUpCustomer(body: SignUpBodySchema): Promise<User> {
+  public async signUpCustomer(body: UserSignUpBodySchema): Promise<User> {
     let role: Role;
     try {
       role = await this.roleRepository.findByType(body.type);
@@ -123,11 +142,10 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
-    delete user.password;
     return user;
   }
 
-  public async signUpProvider(body: SignUpBodySchema): Promise<User> {
+  public async signUpProvider(body: UserSignUpBodySchema): Promise<User> {
     let role: Role;
     try {
       role = await this.roleRepository.findByType(body.type);
@@ -190,6 +208,31 @@ export default class UserController {
     } catch (exception) {
       throw new BadRequestError(exception.detail);
     }
+
+    return user;
+  }
+
+  @Get('/validate/:id/:hash')
+  public async validate(
+    @Param('id') id: number,
+    @Param('hash') hash: string,
+  ): Promise<User> {
+    let user: User;
+    try {
+      user = await this.userRepository.findById(id);
+    } catch (exception) {
+      throw new UnauthorizedError();
+    }
+
+    if (
+      user.status !== 'pending' ||
+      !(await this.bcryptHelper.compare(hash, user.createdAt.toISOString()))
+    ) {
+      throw new UnauthorizedError();
+    }
+
+    user.status = 'enabled';
+    user = await this.userRepository.save(user);
 
     delete user.password;
     return user;
