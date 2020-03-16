@@ -13,6 +13,7 @@ export default class EnvironmentHelper {
     'TYPEORM_DATABASE',
     'JWT_PASSWORD',
     'SENDGRID_API_KEY',
+    'APP_BASE_URL',
     'API_BASE_URL',
     'EMAIL_CONTACT',
   ];
@@ -70,6 +71,10 @@ export default class EnvironmentHelper {
 
   public getSendgridApiKey(): string {
     return <string>process.env.SENDGRID_API_KEY;
+  }
+
+  public getAppBaseUrl(): string {
+    return <string>process.env.APP_BASE_URL;
   }
 
   public getApiBaseUrl(): string {

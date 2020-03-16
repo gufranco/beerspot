@@ -14,7 +14,8 @@
     "TYPEORM_DATABASE": "mandabrejas",
     "JWT_PASSWORD": "fakePassword",
     "SENDGRID_API_KEY": "fakeKey",
-    "API_BASE_URL": "fakeBaseUrl",
+    "APP_BASE_URL": "https://www.fakebrejas.com",
+    "API_BASE_URL": "https://api.fakebrejas.com",
     "EMAIL_CONTACT": "fakeEmailContact"
   }
 }
