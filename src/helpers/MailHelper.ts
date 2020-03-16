@@ -1,10 +1,10 @@
 import { Service, Inject } from 'typedi';
 import sgMail from '@sendgrid/mail';
-import EnvironmentHelper from './EnvironmentHelper';
-import BcryptHelper from './BcryptHelper';
-import User from '../entities/User';
 import mustache from 'mustache';
 import fs from 'fs-extra';
+import EnvironmentHelper from './EnvironmentHelper';
+import CryptoHelper from './CryptoHelper';
+import User from '../entities/User';
 
 @Service()
 export default class MailHelper {
@@ -12,40 +12,60 @@ export default class MailHelper {
   private environmentHelper!: EnvironmentHelper;
 
   @Inject()
-  private bcryptHelper!: BcryptHelper;
+  private bcryptHelper!: CryptoHelper;
 
   constructor() {
     sgMail.setApiKey(this.environmentHelper.getSendgridApiKey());
   }
 
-  private async sendEmail(
+  private async sendMail(
     to: string,
     from: string,
     subject: string,
-    html: string,
+    content: string,
   ) {
     return sgMail.send({
       to,
       from,
       subject,
-      html,
+      html: content,
     });
   }
 
-  public async sendConfirmation(user: User): Promise<void> {
+  public async askForConfirmation(user: User): Promise<void> {
     const content: string = mustache.render(
-      await fs.readFile('../templates/emailConfirmation.mustache', 'utf8'),
+      await fs.readFile('../templates/askForConfirmation.mustache', 'utf8'),
       {
+        name: user.name,
         url: this.environmentHelper.getApiBaseUrl(),
         id: user.id,
-        hash: await this.bcryptHelper.hash(user.createdAt.toISOString()),
+        hash: Buffer.from(
+          await this.bcryptHelper.hash(user.createdAt.toISOString()),
+        ).toString('base64'),
       },
     );
 
-    await this.sendEmail(
+    this.sendMail(
       user.email,
       this.environmentHelper.getEmailContact(),
       'Confirme seu endereço de e-mail',
+      content,
+    );
+  }
+
+  public async sendNewPassword(user: User, newPassword: string): Promise<void> {
+    const content: string = mustache.render(
+      await fs.readFile('../templates/passwordReset.mustache', 'utf8'),
+      {
+        name: user.name,
+        password: newPassword,
+      },
+    );
+
+    this.sendMail(
+      user.email,
+      this.environmentHelper.getEmailContact(),
+      'Nova senha gerada com sucesso!',
       content,
     );
   }

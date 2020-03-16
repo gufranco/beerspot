@@ -1,5 +1,6 @@
+import User from '../entities/User';
+
 export interface HttpSignInResponseInterface {
-  readonly userId: number;
-  readonly role: 'customer' | 'provider' | 'administrator';
+  readonly user: User;
   readonly token: string;
 }
