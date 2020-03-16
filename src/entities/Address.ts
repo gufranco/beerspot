@@ -21,4 +21,14 @@ export default class Address extends BaseEntity {
 
   @Column({ length: 8 })
   zipCode!: string;
+
+  @Column({
+    nullable: true,
+  })
+  latitude!: number;
+
+  @Column({
+    nullable: true,
+  })
+  longitude!: number;
 }
