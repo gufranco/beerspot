@@ -7,9 +7,11 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "build": "tsc -p .",
+    "build": "npm run clean && tsc -p .",
+    "clean": "rm -rf dist/",
     "dev": "nodemon",
-    "start": "pm2-docker ecosystem.config.json"
+    "start": "pm2-docker ecosystem.config.json",
+    "fixtures": "fixtures ./fixtures --config ormconfig.js --sync"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -32,6 +34,8 @@
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
+    "supertest": "^4.0.2",
+    "typeorm-fixtures-cli": "^1.5.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
