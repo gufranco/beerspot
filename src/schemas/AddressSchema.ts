@@ -24,6 +24,14 @@ export default class AddressSchema {
   @MaxLength(32)
   neighborhood!: string;
 
+  @IsNotEmpty()
+  @MaxLength(32)
+  city!: string;
+
+  @IsNotEmpty()
+  @MaxLength(32)
+  state!: string;
+
   @IsNumberString()
   @Matches(/(\d{8})/)
   zipCode!: string;

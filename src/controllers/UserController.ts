@@ -121,6 +121,8 @@ export default class UserController {
       address.number = body.user.address.number;
       address.complement = body.user.address.complement;
       address.neighborhood = body.user.address.neighborhood;
+      address.city = body.user.address.city;
+      address.state = body.user.address.state;
       address.zipCode = body.user.address.zipCode;
 
       address = await this.addressRepository.save(address);
@@ -162,6 +164,8 @@ export default class UserController {
       address.number = body.user.address.number;
       address.complement = body.user.address.complement;
       address.neighborhood = body.user.address.neighborhood;
+      address.city = body.user.address.city;
+      address.state = body.user.address.state;
       address.zipCode = body.user.address.zipCode;
 
       address = await this.addressRepository.save(address);
@@ -175,6 +179,8 @@ export default class UserController {
       companyAddress.number = body.user.address.number;
       companyAddress.complement = body.user.address.complement;
       companyAddress.neighborhood = body.user.address.neighborhood;
+      companyAddress.city = body.user.address.city;
+      companyAddress.state = body.user.address.state;
       companyAddress.zipCode = body.user.address.zipCode;
 
       companyAddress = await this.addressRepository.save(companyAddress);
