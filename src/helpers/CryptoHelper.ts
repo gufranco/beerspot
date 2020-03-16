@@ -12,7 +12,6 @@ export default class CryptoHelper {
     return bcryptjs.hash(value, this.environmentHelper.getBcryptRounds());
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public async compare(value: string, hashedValue: string): Promise<boolean> {
     return bcryptjs.compare(value, hashedValue);
   }
