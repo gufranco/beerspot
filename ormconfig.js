@@ -1,8 +1,17 @@
+// Only used by TypeORM CLI commands
+
 module.exports = {
   type: 'postgres',
-  host: process.env.TYPEORM_HOST,
-  port: Number(process.env.TYPEORM_PORT),
-  username: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  database: `${process.env.TYPEORM_DATABASE}_${process.env.NODE_ENV}`,
+  host: process.env.TYPEORM_HOST ? process.env.TYPEORM_HOST : 'localhost',
+  port: process.env.TYPEORM_PORT ? Number(process.env.TYPEORM_PORT) : 5432,
+  username: process.env.TYPEORM_USERNAME
+    ? process.env.TYPEORM_USERNAME
+    : 'root',
+  password: process.env.TYPEORM_PASSWORD
+    ? process.env.TYPEORM_PASSWORD
+    : 'root',
+  database:
+    process.env.TYPEORM_DATABASE && process.env.NODE_ENV
+      ? `${process.env.TYPEORM_DATABASE}_${process.env.NODE_ENV}`
+      : 'mandabrejas_development',
 };
