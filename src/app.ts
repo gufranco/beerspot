@@ -6,8 +6,8 @@ import AppController from './controllers/AppController';
 (async () => {
   prettyError.start();
 
-  const mainController: AppController = Container.get(AppController);
-  await mainController.run();
+  const appController: AppController = Container.get(AppController);
+  await appController.run();
   // eslint-disable-next-line no-console
   console.log('Application is up and running!');
 })();
