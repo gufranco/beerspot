@@ -8,7 +8,10 @@ export default class JwtHelper {
   @Inject()
   private environmentHelper!: EnvironmentHelper;
 
-  public async createToken(payload: JwtPayloadInterface, expiresIn: string = '30 days'): Promise<string> {
+  public async createToken(
+    payload: JwtPayloadInterface,
+    expiresIn: string = '30 days',
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       jsonwebtoken.sign(
         payload,

@@ -14,16 +14,14 @@ export default class MailHelper {
   @Inject()
   private bcryptHelper!: CryptoHelper;
 
-  constructor() {
-    sgMail.setApiKey(this.environmentHelper.getSendgridApiKey());
-  }
-
   private async sendMail(
     to: string,
     from: string,
     subject: string,
     content: string,
   ) {
+    sgMail.setApiKey(this.environmentHelper.getSendgridApiKey());
+
     return sgMail.send({
       to,
       from,
@@ -34,7 +32,10 @@ export default class MailHelper {
 
   public async askForConfirmation(user: User): Promise<void> {
     const content: string = mustache.render(
-      await fs.readFile('../templates/askForConfirmation.mustache', 'utf8'),
+      await fs.readFile(
+        `${__dirname}/../../templates/askForConfirmation.mustache`,
+        'utf8',
+      ),
       {
         name: user.name,
         url: this.environmentHelper.getApiBaseUrl(),
@@ -55,7 +56,10 @@ export default class MailHelper {
 
   public async sendNewPassword(user: User, newPassword: string): Promise<void> {
     const content: string = mustache.render(
-      await fs.readFile('../templates/passwordReset.mustache', 'utf8'),
+      await fs.readFile(
+        `${__dirname}/../../templates/passwordReset.mustache`,
+        'utf8',
+      ),
       {
         name: user.name,
         password: newPassword,
