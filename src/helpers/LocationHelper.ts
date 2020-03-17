@@ -1,6 +1,5 @@
 import NodeGeocoder, { Geocoder, Entry } from 'node-geocoder';
 import { Service, Inject } from 'typedi';
-import { NotFoundError } from 'routing-controllers';
 import EnvironmentHelper from './EnvironmentHelper';
 import { GeoPosition } from '../interfaces/GeocodeInterface';
 
