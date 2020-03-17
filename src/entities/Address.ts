@@ -19,22 +19,18 @@ export default class Address extends BaseEntity {
   @Column({ length: 32 })
   neighborhood!: string;
 
-  @Column({ length: 8 })
-  zipCode!: string;
-
   @Column({ length: 32 })
   city!: string;
 
   @Column({ length: 32 })
   state!: string;
 
-  @Column({
-    nullable: true,
-  })
+  @Column({ length: 8 })
+  zipCode!: string;
+
+  @Column()
   latitude!: number;
 
-  @Column({
-    nullable: true,
-  })
+  @Column()
   longitude!: number;
 }

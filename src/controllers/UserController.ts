@@ -26,6 +26,8 @@ import Company from '../entities/Company';
 import CompanyRepository from '../repositories/CompanyRepository';
 import MailHelper from '../helpers/MailHelper';
 import UserPasswordResetSchema from '../schemas/UserPasswordResetSchema';
+import { GeoPosition } from '../interfaces/GeocodeInterface';
+import LocationHelper from '../helpers/LocationHelper';
 
 @Service()
 @JsonController('/users')
@@ -38,6 +40,9 @@ export default class UserController {
 
   @Inject()
   private mailHelper!: MailHelper;
+
+  @Inject()
+  private locationHelper!: LocationHelper;
 
   private userRepository: UserRepository = getCustomRepository(UserRepository);
 
@@ -115,6 +120,18 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
+    let addressPosition: GeoPosition;
+    try {
+      addressPosition = await this.locationHelper.getPosition(
+        body.user.address.street,
+        body.user.address.number,
+        body.user.address.neighborhood,
+        body.user.address.zipCode,
+      );
+    } catch (exception) {
+      throw new BadRequestError(exception.message);
+    }
+
     let address: Address = new Address();
     try {
       address.street = body.user.address.street;
@@ -124,6 +141,8 @@ export default class UserController {
       address.city = body.user.address.city;
       address.state = body.user.address.state;
       address.zipCode = body.user.address.zipCode;
+      address.latitude = addressPosition.latitude;
+      address.longitude = addressPosition.longitude;
 
       address = await this.addressRepository.save(address);
     } catch (exception) {
@@ -158,6 +177,18 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
+    let addressPosition: GeoPosition;
+    try {
+      addressPosition = await this.locationHelper.getPosition(
+        body.user.address.street,
+        body.user.address.number,
+        body.user.address.neighborhood,
+        body.user.address.zipCode,
+      );
+    } catch (exception) {
+      throw new BadRequestError(exception.message);
+    }
+
     let address: Address = new Address();
     try {
       address.street = body.user.address.street;
@@ -167,21 +198,37 @@ export default class UserController {
       address.city = body.user.address.city;
       address.state = body.user.address.state;
       address.zipCode = body.user.address.zipCode;
+      address.latitude = addressPosition.latitude;
+      address.longitude = addressPosition.longitude;
 
       address = await this.addressRepository.save(address);
     } catch (exception) {
       throw new BadRequestError(exception.detail);
     }
 
+    let companyAddressPosition: GeoPosition;
+    try {
+      companyAddressPosition = await this.locationHelper.getPosition(
+        body.company.address.street,
+        body.company.address.number,
+        body.company.address.neighborhood,
+        body.company.address.zipCode,
+      );
+    } catch (exception) {
+      throw new BadRequestError(exception.message);
+    }
+
     let companyAddress: Address = new Address();
     try {
-      companyAddress.street = body.user.address.street;
-      companyAddress.number = body.user.address.number;
-      companyAddress.complement = body.user.address.complement;
-      companyAddress.neighborhood = body.user.address.neighborhood;
-      companyAddress.city = body.user.address.city;
-      companyAddress.state = body.user.address.state;
-      companyAddress.zipCode = body.user.address.zipCode;
+      companyAddress.street = body.company.address.street;
+      companyAddress.number = body.company.address.number;
+      companyAddress.complement = body.company.address.complement;
+      companyAddress.neighborhood = body.company.address.neighborhood;
+      companyAddress.city = body.company.address.city;
+      companyAddress.state = body.company.address.state;
+      companyAddress.zipCode = body.company.address.zipCode;
+      companyAddress.latitude = companyAddressPosition.latitude;
+      companyAddress.longitude = companyAddressPosition.longitude;
 
       companyAddress = await this.addressRepository.save(companyAddress);
     } catch (exception) {
