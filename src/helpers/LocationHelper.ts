@@ -46,7 +46,12 @@ export default class LocationHelper {
         longitude: <number>result.longitude,
       }))
       .reduce(
-        (previousValue, currentValue, index, positions): GeoPosition => {
+        (
+          previousValue: GeoPosition,
+          currentValue: GeoPosition,
+          index: number,
+          positions: GeoPosition[],
+        ): GeoPosition => {
           const position: GeoPosition = {
             latitude: previousValue.latitude + currentValue.latitude,
             longitude: previousValue.longitude + currentValue.longitude,
