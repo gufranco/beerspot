@@ -1,7 +1,11 @@
 {
-  "watch": ["src"],
+  "watch": [
+    "src"
+  ],
   "ext": "ts",
-  "ignore": ["src/**/*.spec.ts"],
+  "ignore": [
+    "tests/*.test.ts"
+  ],
   "exec": "npm run build && node --inspect ./dist/app.js",
   "env": {
     "NODE_ENV": "development",

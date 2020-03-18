@@ -1,0 +1,27 @@
+{
+  "extends": ["airbnb-typescript/base", "plugin:prettier/recommended"],
+  "env": {
+    "jest": true,
+    "node": true
+  },
+  "rules": {
+    "max-len": [
+      "warn",
+      {
+        "code": 80,
+        "tabWidth": 2,
+        "comments": 80,
+        "ignoreComments": false,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "class-methods-use-this": "off"
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}
