@@ -1,21 +1,17 @@
 import NodeGeocoder, { Geocoder, Entry } from 'node-geocoder';
-import { Service, Inject } from 'typedi';
-import EnvironmentHelper from './EnvironmentHelper';
+import { Service } from 'typedi';
 import { GeoPosition } from '../interfaces/GeocodeInterface';
+
+export type UnitType = 'km' | 'mi';
 
 @Service()
 export default class LocationHelper {
-  @Inject()
-  private environmentHelper!: EnvironmentHelper;
-
   private geocoder: Geocoder;
 
   constructor() {
     this.geocoder = NodeGeocoder({
       provider: 'openstreetmap',
-      email: this.environmentHelper.getEmailContact(),
       httpAdapter: 'https',
-      formatter: null,
     });
   }
 
@@ -33,104 +29,99 @@ export default class LocationHelper {
       throw new Error("The location for this given address wasn't found");
     }
 
-    return results
+    const locations: GeoPosition[] = results
       .filter(
-        (result) =>
+        (result: Entry) =>
           typeof result.zipcode === 'string' &&
           typeof result.latitude === 'number' &&
           typeof result.longitude === 'number' &&
-          zipCode === result.zipcode.replace(/\d/g, ''),
+          zipCode === result.zipcode.replace(/\D/g, ''),
       )
       .map((result) => ({
         latitude: <number>result.latitude,
         longitude: <number>result.longitude,
-      }))
-      .reduce(
-        (
-          previousValue: GeoPosition,
-          currentValue: GeoPosition,
-          index: number,
-          positions: GeoPosition[],
-        ): GeoPosition => {
-          const position: GeoPosition = {
-            latitude: previousValue.latitude + currentValue.latitude,
-            longitude: previousValue.longitude + currentValue.longitude,
+      }));
+
+    if (!locations.length) {
+      throw new Error("The location for this given address wasn't found");
+    }
+
+    return locations.reduce(
+      (
+        previousValue: GeoPosition,
+        currentValue: GeoPosition,
+        index: number,
+        positions: GeoPosition[],
+      ): GeoPosition => {
+        const position: GeoPosition = {
+          latitude: previousValue.latitude + currentValue.latitude,
+          longitude: previousValue.longitude + currentValue.longitude,
+        };
+
+        if (index === positions.length - 1) {
+          return {
+            latitude: Number((position.latitude / positions.length).toFixed(7)),
+            longitude: Number(
+              (position.longitude / positions.length).toFixed(7),
+            ),
           };
+        }
 
-          if (index === positions.length - 1) {
-            return {
-              latitude: position.latitude / positions.length,
-              longitude: position.longitude / positions.length,
-            };
-          }
+        return position;
+      },
+      {
+        latitude: 0,
+        longitude: 0,
+      },
+    );
+  }
 
-          return position;
-        },
-        { latitude: 0, longitude: 0 },
-      );
+  private degreesToRadians(degrees: number) {
+    return degrees * 0.017453292519943295;
   }
 
   private async getDistance(
     firstPosition: GeoPosition,
     secondPosition: GeoPosition,
+    unit: UnitType = 'km',
   ): Promise<number> {
-    return (
-      6371 *
+    const deltaLatitude: number = this.degreesToRadians(
+      secondPosition.latitude - firstPosition.latitude,
+    );
+    const deltaLongitude: number = this.degreesToRadians(
+      secondPosition.longitude - firstPosition.longitude,
+    );
+    const radiansFirstLatitude: number = this.degreesToRadians(
+      firstPosition.latitude,
+    );
+    const radiansSecondLatitude: number = this.degreesToRadians(
+      secondPosition.latitude,
+    );
+    const result: number =
       2 *
       Math.atan2(
         Math.sqrt(
-          Math.sin(
-            ((secondPosition.latitude - firstPosition.latitude) * Math.PI) /
-              180 /
-              2,
-          ) *
-            Math.sin(
-              ((secondPosition.latitude - firstPosition.latitude) * Math.PI) /
-                180 /
-                2,
-            ) +
-            Math.sin(
-              ((secondPosition.longitude - firstPosition.longitude) * Math.PI) /
-                180 /
-                2,
-            ) *
-              Math.sin(
-                ((secondPosition.longitude - firstPosition.longitude) *
-                  Math.PI) /
-                  180 /
-                  2,
-              ) *
-              Math.cos((firstPosition.latitude * Math.PI) / 180) *
-              Math.cos((secondPosition.latitude * Math.PI) / 180),
+          Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
+            Math.sin(deltaLongitude / 2) *
+              Math.sin(deltaLongitude / 2) *
+              Math.cos(radiansFirstLatitude) *
+              Math.cos(radiansSecondLatitude),
         ),
         Math.sqrt(
           1 -
-            Math.sin(
-              ((secondPosition.latitude - firstPosition.latitude) * Math.PI) /
-                180 /
-                2,
-            ) *
-              Math.sin(
-                ((secondPosition.latitude - firstPosition.latitude) * Math.PI) /
-                  180 /
-                  2,
-              ) +
-            Math.sin(
-              ((secondPosition.longitude - firstPosition.longitude) * Math.PI) /
-                180 /
-                2,
-            ) *
-              Math.sin(
-                ((secondPosition.longitude - firstPosition.longitude) *
-                  Math.PI) /
-                  180 /
-                  2,
-              ) *
-              Math.cos((firstPosition.latitude * Math.PI) / 180) *
-              Math.cos((secondPosition.latitude * Math.PI) / 180),
+            Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
+            Math.sin(deltaLongitude / 2) *
+              Math.sin(deltaLongitude / 2) *
+              Math.cos(radiansFirstLatitude) *
+              Math.cos(radiansSecondLatitude),
         ),
-      )
-    );
+      );
+
+    if (unit === 'km') {
+      return result * 6371;
+    }
+
+    return result * 3956;
   }
 
   public async isInsideCoverageArea(
