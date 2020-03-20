@@ -1,10 +1,2 @@
-.editorconfig
-.env
-.env.example
-.gitignore
-.prettierrc
 dist/
-LICENSE
 node_modules/
-nodemon.json
-README.md
