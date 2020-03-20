@@ -20,8 +20,5 @@ EXPOSE 80
 # Don't run app as root
 USER node
 
-# Don’t lie to yourself. It gave you pleasure.
-# You enjoyed that dead girl’s body.
-#
-#  -- ZOMBIE, Rob
+#Start
 CMD ["npm", "run", "start"]
