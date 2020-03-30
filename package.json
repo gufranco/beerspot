@@ -66,6 +66,7 @@
     "routing-controllers": "^0.8.1-alpha.2",
     "typedi": "^0.8.0",
     "typeorm": "^0.2.15",
+    "typeorm-typedi-extensions": "^0.2.3",
     "uuid": "^7.0.2"
   },
   "engines": {

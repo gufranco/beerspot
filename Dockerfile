@@ -12,6 +12,7 @@ RUN apk update && \
 
 # Install app's dependencies and build
 RUN npm install --no-optional && \
+  npm cache clean --force && \
   npm run build
 
 # Expose port
@@ -20,5 +21,5 @@ EXPOSE 80
 # Don't run app as root
 USER node
 
-#Start
+# Start
 CMD ["npm", "run", "start"]

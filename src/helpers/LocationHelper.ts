@@ -1,6 +1,6 @@
 import NodeGeocoder, { Geocoder, Entry } from 'node-geocoder';
 import { Service } from 'typedi';
-import { GeoPosition } from '../interfaces/GeocodeInterface';
+import { GeoLocation } from '../interfaces/GeoLocationInterface';
 
 export type UnitType = 'km' | 'mi';
 
@@ -20,7 +20,7 @@ export default class LocationHelper {
     number: number,
     neighborhood: string,
     zipCode: string,
-  ): Promise<GeoPosition> {
+  ): Promise<GeoLocation> {
     const results: Entry[] = await this.geocoder.geocode(
       `${street}, ${number} - ${neighborhood}`,
     );
@@ -29,7 +29,7 @@ export default class LocationHelper {
       throw new Error("The location for this given address wasn't found");
     }
 
-    const locations: GeoPosition[] = results
+    const locations: GeoLocation[] = results
       .filter(
         (result: Entry) =>
           typeof result.zipcode === 'string' &&
@@ -48,21 +48,21 @@ export default class LocationHelper {
 
     return locations.reduce(
       (
-        previousValue: GeoPosition,
-        currentValue: GeoPosition,
+        previousValue: GeoLocation,
+        currentValue: GeoLocation,
         index: number,
-        positions: GeoPosition[],
-      ): GeoPosition => {
-        const position: GeoPosition = {
+        locations: GeoLocation[],
+      ): GeoLocation => {
+        const position: GeoLocation = {
           latitude: previousValue.latitude + currentValue.latitude,
           longitude: previousValue.longitude + currentValue.longitude,
         };
 
-        if (index === positions.length - 1) {
+        if (index === locations.length - 1) {
           return {
-            latitude: Number((position.latitude / positions.length).toFixed(7)),
+            latitude: Number((position.latitude / locations.length).toFixed(7)),
             longitude: Number(
-              (position.longitude / positions.length).toFixed(7),
+              (position.longitude / locations.length).toFixed(7),
             ),
           };
         }
@@ -81,8 +81,8 @@ export default class LocationHelper {
   }
 
   private async getDistance(
-    firstPosition: GeoPosition,
-    secondPosition: GeoPosition,
+    firstPosition: GeoLocation,
+    secondPosition: GeoLocation,
     unit: UnitType = 'km',
   ): Promise<number> {
     const deltaLatitude: number = this.degreesToRadians(
@@ -125,8 +125,8 @@ export default class LocationHelper {
   }
 
   public async isInsideCoverageArea(
-    customerPosition: GeoPosition,
-    providerPosition: GeoPosition,
+    customerPosition: GeoLocation,
+    providerPosition: GeoLocation,
     coverageDistance: number,
   ): Promise<boolean> {
     const distance: number = await this.getDistance(

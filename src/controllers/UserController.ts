@@ -1,4 +1,3 @@
-import { getCustomRepository } from 'typeorm';
 import { Service, Inject } from 'typedi';
 import {
   JsonController,
@@ -12,8 +11,6 @@ import {
   InternalServerError,
 } from 'routing-controllers';
 import Role from '../entities/Role';
-import UserRepository from '../repositories/UserRepository';
-import RoleRepository from '../repositories/RoleRepository';
 import User from '../entities/User';
 import { HttpSignInResponseInterface } from '../interfaces/HttpInterface';
 import UserSignInBodySchema from '../schemas/UserSignInBodySchema';
@@ -22,12 +19,15 @@ import CryptoHelper from '../helpers/CryptoHelper';
 import JwtHelper from '../helpers/JwtHelper';
 import MailHelper from '../helpers/MailHelper';
 import Address from '../entities/Address';
-import AddressRepository from '../repositories/AddressRepository';
 import Company from '../entities/Company';
-import CompanyRepository from '../repositories/CompanyRepository';
 import UserPasswordResetSchema from '../schemas/UserPasswordResetSchema';
-import { GeoPosition } from '../interfaces/GeocodeInterface';
+import { GeoLocation } from '../interfaces/GeoLocationInterface';
 import LocationHelper from '../helpers/LocationHelper';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import UserRepository from '../repositories/UserRepository';
+import RoleRepository from '../repositories/RoleRepository';
+import AddressRepository from '../repositories/AddressRepository';
+import CompanyRepository from '../repositories/CompanyRepository';
 
 @Service()
 @JsonController('/users')
@@ -44,17 +44,17 @@ export default class UserController {
   @Inject()
   private locationHelper!: LocationHelper;
 
-  private userRepository: UserRepository = getCustomRepository(UserRepository);
+  @InjectRepository()
+  private userRepository!: UserRepository;
 
-  private roleRepository: RoleRepository = getCustomRepository(RoleRepository);
+  @InjectRepository()
+  private roleRepository!: RoleRepository;
 
-  private addressRepository: AddressRepository = getCustomRepository(
-    AddressRepository,
-  );
+  @InjectRepository()
+  private addressRepository!: AddressRepository;
 
-  private companyRepository: CompanyRepository = getCustomRepository(
-    CompanyRepository,
-  );
+  @InjectRepository()
+  private companyRepository!: CompanyRepository;
 
   @Post('/sign_in')
   public async signIn(
@@ -120,7 +120,7 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
-    let addressPosition: GeoPosition;
+    let addressPosition: GeoLocation;
     try {
       addressPosition = await this.locationHelper.getPosition(
         body.user.address.street,
@@ -177,7 +177,7 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
-    let addressPosition: GeoPosition;
+    let addressPosition: GeoLocation;
     try {
       addressPosition = await this.locationHelper.getPosition(
         body.user.address.street,
@@ -206,7 +206,7 @@ export default class UserController {
       throw new BadRequestError(exception.detail);
     }
 
-    let companyAddressPosition: GeoPosition;
+    let companyAddressPosition: GeoLocation;
     try {
       companyAddressPosition = await this.locationHelper.getPosition(
         body.company.address.street,
