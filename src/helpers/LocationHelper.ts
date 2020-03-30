@@ -24,8 +24,6 @@ export default class LocationHelper {
       `${street}, ${number} - ${neighborhood}`,
     );
 
-    console.log(results);
-
     if (!results.length) {
       throw new Error("The location for this given address wasn't found");
     }
@@ -33,7 +31,6 @@ export default class LocationHelper {
     const locations: GeoLocation[] = results
       .filter(
         (result: Entry) =>
-          typeof result.zipcode === 'string' &&
           typeof result.latitude === 'number' &&
           typeof result.longitude === 'number',
       )
@@ -44,6 +41,10 @@ export default class LocationHelper {
 
     if (!locations.length) {
       throw new Error("The location for this given address wasn't found");
+    }
+
+    if (locations.length === 1) {
+      return locations[0];
     }
 
     return locations.reduce(
