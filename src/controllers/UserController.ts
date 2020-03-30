@@ -126,7 +126,6 @@ export default class UserController {
         body.user.address.street,
         body.user.address.number,
         body.user.address.neighborhood,
-        body.user.address.zipCode,
       );
     } catch (exception) {
       throw new BadRequestError(exception.message);
@@ -183,7 +182,6 @@ export default class UserController {
         body.user.address.street,
         body.user.address.number,
         body.user.address.neighborhood,
-        body.user.address.zipCode,
       );
     } catch (exception) {
       throw new BadRequestError(exception.message);
@@ -212,7 +210,6 @@ export default class UserController {
         body.company.address.street,
         body.company.address.number,
         body.company.address.neighborhood,
-        body.company.address.zipCode,
       );
     } catch (exception) {
       throw new BadRequestError(exception.message);

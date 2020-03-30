@@ -18,12 +18,13 @@ export default class LocationHelper {
   public async getPosition(
     street: string,
     number: number,
-    neighborhood: string,
-    zipCode: string,
+    neighborhood: string
   ): Promise<GeoLocation> {
     const results: Entry[] = await this.geocoder.geocode(
       `${street}, ${number} - ${neighborhood}`,
     );
+
+    console.log(results);
 
     if (!results.length) {
       throw new Error("The location for this given address wasn't found");
@@ -34,8 +35,7 @@ export default class LocationHelper {
         (result: Entry) =>
           typeof result.zipcode === 'string' &&
           typeof result.latitude === 'number' &&
-          typeof result.longitude === 'number' &&
-          zipCode === result.zipcode.replace(/\D/g, ''),
+          typeof result.longitude === 'number',
       )
       .map((result) => ({
         latitude: <number>result.latitude,
