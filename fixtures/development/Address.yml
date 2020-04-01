@@ -1,0 +1,34 @@
+entity: Address
+items:
+  address0:
+    street: "Muniz de Souza"
+    number: 910
+    complement: "CUSTOMER"
+    neighborhood: "Aclimação"
+    city: "São Paulo"
+    state: "São Paulo"
+    zipCode: "01526001"
+    latitude: -23.5679182
+    longitude: -46.6263151
+
+  address1:
+    street: "Muniz de Souza"
+    number: 911
+    complement: "PROVIDER - user"
+    neighborhood: "Aclimação"
+    city: "São Paulo"
+    state: "São Paulo"
+    zipCode: "01526001"
+    latitude: -23.5679182
+    longitude: -46.6263151
+
+  address2:
+    street: "Muniz de Souza"
+    number: 912
+    complement: "PROVIDER - company"
+    neighborhood: "Aclimação"
+    city: "São Paulo"
+    state: "São Paulo"
+    zipCode: "01526001"
+    latitude: -23.5679182
+    longitude: -46.6263151

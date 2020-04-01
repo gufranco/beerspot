@@ -1,0 +1,23 @@
+entity: User
+items:
+  user0:
+    role: "@role0"
+    address: "@address0"
+    email: "gustavocfranco+customer@gmail.com"
+    password: "$2y$10$iKjUDY7/DypVdK7M3ZL4GeddQFkiCIWBotTXAPU4jLfbI7JsN/dIK" # 1234567890_1234567890
+    status: "pending"
+    name: "John Doe - CUSTOMER"
+    birthDate: "1986-10-28"
+    document: "48345830072"
+    phone: "+5511953639344"
+
+  user1:
+    role: "@role1"
+    address: "@address1"
+    email: "gustavocfranco+provider@gmail.com"
+    password: "$2y$10$iKjUDY7/DypVdK7M3ZL4GeddQFkiCIWBotTXAPU4jLfbI7JsN/dIK" # 1234567890_1234567890
+    status: "pending"
+    name: "John Doe - PROVIDER"
+    birthDate: "1986-10-28"
+    document: "67463457001"
+    phone: "+5511953639366"

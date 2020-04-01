@@ -1,0 +1,7 @@
+entity: Company
+items:
+  company0:
+    address: "@address2"
+    name: "Barzinho do John Doe"
+    document: "71182859000107"
+    radius: 5

@@ -11,7 +11,9 @@
     "clean": "rm -rf dist/",
     "dev": "nodemon",
     "start": "pm2-docker ecosystem.config.json",
-    "fixtures": "npm run build && fixtures ./fixtures --config ormconfig.js --sync"
+    "fixtures:production": "npm run build && fixtures ./fixtures/production --config ormconfig.js --sync",
+    "fixtures:testing": "npm run build && fixtures ./fixtures/testing --config ormconfig.js --sync",
+    "fixtures:development": "npm run build && fixtures ./fixtures/development --config ormconfig.js --sync"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

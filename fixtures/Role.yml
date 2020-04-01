@@ -1,8 +1,0 @@
-entity: Role
-items:
-  role0:
-    type: 'customer'
-  role1:
-    type: 'provider'
-  role2:
-    type: 'administrator'
